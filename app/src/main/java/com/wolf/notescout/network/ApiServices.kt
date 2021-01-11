@@ -5,10 +5,7 @@ import io.reactivex.Observable
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.PUT
+import retrofit2.http.*
 
 interface ApiServices {
 
@@ -17,6 +14,9 @@ interface ApiServices {
 
     @PUT("/groceries")
     fun addNoteItem(@Body noteData: NoteRestData.NoteData): Observable<NoteRestData.NoteData>
+
+    @DELETE("/groceries/{id}")
+    fun deleteNoteItem(@Path("id") id: Long): Observable<NoteRestData.NoteData>
 
     companion object {
         fun getServices(): ApiServices {

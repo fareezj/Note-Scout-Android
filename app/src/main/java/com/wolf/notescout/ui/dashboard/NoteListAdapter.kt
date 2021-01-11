@@ -31,6 +31,7 @@ class NoteListAdapter (context: Context?, var items: ArrayList<NoteRestData.Note
     }
 
     fun removeAt(position: Int){
+        onItemClick?.invoke(items[position])
         items.removeAt(position)
         notifyItemRemoved(position)
     }

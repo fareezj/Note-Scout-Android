@@ -42,6 +42,18 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         subscription.add(subscribe)
     }
 
+    fun handleDeleteNoteItem(id: Long){
+        val subscribe = noteAPI.deleteNoteItem(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    handleGetAllNotesFromApi()
+                }, { err -> var msg = err.localizedMessage
+                    Log.i("DATA", msg.toString())
+                })
+        subscription.add(subscribe)
+    }
+
     fun handleGetAllNotesFromApi() {
         val subscribe = getAllNotesFromApi()
             .subscribeOn(Schedulers.io())

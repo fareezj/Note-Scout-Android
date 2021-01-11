@@ -96,6 +96,9 @@ class DashboardFragment : Fragment() {
 
         val swipeHandler = object : SwipeToDeleteCallback(requireContext()) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                adapter.onItemClick = {
+                    viewModel.handleDeleteNoteItem(it.id)
+                }
                 adapter.removeAt(viewHolder.adapterPosition)
             }
         }
