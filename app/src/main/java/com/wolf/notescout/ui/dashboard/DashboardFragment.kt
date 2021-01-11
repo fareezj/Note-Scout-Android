@@ -1,5 +1,6 @@
 package com.wolf.notescout.ui.dashboard
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
@@ -47,6 +48,10 @@ class DashboardFragment : Fragment() {
 
         viewModel.allNotesData.observe(viewLifecycleOwner, Observer {
             noteItemList = it as ArrayList<NoteRestData.NoteData>
+
+            val totalTask = noteItemList.size
+            tv_task_progress!!.text = "0/$totalTask"
+
             setupAdapter(noteItemList)
         })
 
