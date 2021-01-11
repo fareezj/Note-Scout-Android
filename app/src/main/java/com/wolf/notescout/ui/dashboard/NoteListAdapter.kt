@@ -30,6 +30,11 @@ class NoteListAdapter (context: Context?, var items: ArrayList<NoteRestData.Note
         return items.size
     }
 
+    fun removeAt(position: Int){
+        items.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
     inner class NoteItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         init {
             itemView.setOnClickListener {
