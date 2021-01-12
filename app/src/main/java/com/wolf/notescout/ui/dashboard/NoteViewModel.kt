@@ -1,10 +1,9 @@
 package com.wolf.notescout.ui.dashboard
 
 import android.app.Application
+import android.text.BoringLayout
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
 import com.wolf.notescout.data.model.NoteRestData
 import com.wolf.notescout.network.ApiServices
 import io.reactivex.Observable
@@ -21,9 +20,19 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
     private val _allNotesData = MutableLiveData<List<NoteRestData.NoteData>>()
     val allNotesData: LiveData<List<NoteRestData.NoteData>> = _allNotesData
 
+//    private val _completedTask = MutableLiveData<Int>()
+//    val completedTask: LiveData<Int> = _completedTask
+
     private fun getAllNotesFromApi(): Observable<List<NoteRestData.NoteData>>{
         return noteAPI.getGroceries()
     }
+//
+//    fun getCompletedTask() {
+//        allNotesData.map { value ->
+//            val completedNote = value.filter { it.isChecked }
+//            _completedTask.value = completedNote.size
+//        }
+//    }
 
     fun handleAddNote(item: String, isChecked: Boolean, username: String, groupID: Long) {
         val subscribe = noteAPI.addNoteItem(

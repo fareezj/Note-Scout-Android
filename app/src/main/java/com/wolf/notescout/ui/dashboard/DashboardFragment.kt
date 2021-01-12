@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.wolf.notescout.R
 import com.wolf.notescout.data.model.NoteRestData
+import com.wolf.notescout.databinding.FragmentDashboardBinding
 import com.wolf.notescout.util.SwipeToDeleteCallback
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -32,7 +33,7 @@ class DashboardFragment : Fragment() {
 
     private lateinit var adapter: NoteListAdapter
     private lateinit var viewModel: NoteViewModel
-    private var isChecked: Boolean = false
+    private lateinit var binding: FragmentDashboardBinding
     private var noteItemList: ArrayList<NoteRestData.NoteData> = arrayListOf()
 
     override fun onCreateView(
@@ -40,40 +41,41 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_dashboard, container, false)
+        binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
         viewModel.handleGetAllNotesFromApi()
+//        viewModel.completedTask.observe(viewLifecycleOwner, Observer {
+//            completedTask = it
+//            Log.i("COMPLETED TASK:", it.toString())
+//        })
 
         viewModel.allNotesData.observe(viewLifecycleOwner, Observer {
             noteItemList = it as ArrayList<NoteRestData.NoteData>
-
-            val totalTask = noteItemList.size
-            tv_task_progress!!.text = "0/$totalTask"
-
             setupAdapter(noteItemList)
         })
 
         setupComponent()
 
-        srl_note_list.setOnRefreshListener {
+        binding.srlNoteList.setOnRefreshListener {
             viewModel.handleGetAllNotesFromApi()
-            srl_note_list.isRefreshing = false
+            binding.srlNoteList.isRefreshing = false
         }
 
         val dialog = setupAddNewNoteItem()
 
-        fab_add_note.setOnClickListener {
+        binding.fabAddNote.setOnClickListener {
             dialog.show()
         }
     }
 
     private fun setupComponent() {
-        srl_note_list.setColorSchemeColors(Color.BLUE)
-        srl_note_list.setProgressBackgroundColorSchemeColor(Color.GREEN)
+        binding.srlNoteList.setColorSchemeColors(Color.BLUE)
+        binding.srlNoteList.setProgressBackgroundColorSchemeColor(Color.GREEN)
 
     }
 
@@ -96,10 +98,10 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupAdapter(noteList: ArrayList<NoteRestData.NoteData>) {
-        rv_note_list.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        rv_note_list.setHasFixedSize(true)
+        binding.rvNoteList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.rvNoteList.setHasFixedSize(true)
         adapter = NoteListAdapter(context, noteItemList)
-        rv_note_list.adapter = adapter
+        binding.rvNoteList.adapter = adapter
 
         adapter.onItemClick= {
             Log.i("CLICK ", it.item.toString())
