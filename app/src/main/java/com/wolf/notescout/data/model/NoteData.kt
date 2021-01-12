@@ -11,8 +11,14 @@ class NoteRestData {
         @SerializedName("name")
         var item: String = "",
 
-        @SerializedName("isAvailable")
-        var isAvailable: Boolean = false
+        @SerializedName("isChecked")
+        var isAvailable: Boolean = false,
+
+        @SerializedName("username")
+        var username: String = "",
+
+        @SerializedName("groupID")
+        var groupID: Long = 0
     )
 }
 
