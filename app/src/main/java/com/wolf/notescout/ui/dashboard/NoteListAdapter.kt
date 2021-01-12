@@ -1,5 +1,6 @@
 package com.wolf.notescout.ui.dashboard
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -21,9 +22,11 @@ class NoteListAdapter (context: Context?, var items: ArrayList<NoteRestData.Note
         )
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is NoteItemViewHolder) {
             holder.itemView.tv_note_item.text = items[position].item
+            holder.itemView.tv_user_note.text = "By: ${items[position].username}"
         }
     }
 
