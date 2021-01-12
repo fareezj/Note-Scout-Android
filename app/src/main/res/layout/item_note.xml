@@ -24,11 +24,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.148"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/checkBox"
+            app:layout_constraintTop_toTopOf="@+id/cb_isChecked"
             app:layout_constraintVertical_bias="0.271" />
 
         <CheckBox
-            android:id="@+id/checkBox"
+            android:id="@+id/cb_isChecked"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_gravity="end"

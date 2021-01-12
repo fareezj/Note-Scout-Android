@@ -13,15 +13,16 @@ class NoteListAdapter (context: Context?, var items: ArrayList<NoteRestData.Note
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var onItemClick: ((NoteRestData.NoteData) -> Unit)? = null
+    var onCheckBoxClick: ((NoteRestData.NoteData) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return NoteItemViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_note, parent, false)
+                LayoutInflater.from(parent.context).inflate(R.layout.item_note, parent, false)
         )
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if(holder is NoteItemViewHolder) {
+        if (holder is NoteItemViewHolder) {
             holder.itemView.tv_note_item.text = items[position].item
         }
     }
@@ -30,7 +31,7 @@ class NoteListAdapter (context: Context?, var items: ArrayList<NoteRestData.Note
         return items.size
     }
 
-    fun removeAt(position: Int){
+    fun removeAt(position: Int) {
         onItemClick?.invoke(items[position])
         items.removeAt(position)
         notifyItemRemoved(position)
@@ -38,8 +39,17 @@ class NoteListAdapter (context: Context?, var items: ArrayList<NoteRestData.Note
 
     inner class NoteItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         init {
+
             itemView.setOnClickListener {
                 onItemClick?.invoke(items[layoutPosition])
+            }
+            itemView.cb_isChecked.setOnClickListener {
+
+                if (itemView.cb_isChecked.isChecked) {
+                    onCheckBoxClick?.invoke(items[layoutPosition].apply { isChecked = true })
+                } else {
+                    onCheckBoxClick?.invoke(items[layoutPosition].apply { isChecked = false })
+                }
             }
         }
     }

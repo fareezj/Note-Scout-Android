@@ -26,11 +26,13 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.add_item_dialog.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
+import kotlinx.android.synthetic.main.item_note.*
 
 class DashboardFragment : Fragment() {
 
     private lateinit var adapter: NoteListAdapter
     private lateinit var viewModel: NoteViewModel
+    private var isChecked: Boolean = false
     private var noteItemList: ArrayList<NoteRestData.NoteData> = arrayListOf()
 
     override fun onCreateView(
@@ -81,7 +83,11 @@ class DashboardFragment : Fragment() {
             .setTitle("Add New Note Item")
             .setPositiveButton("OK"){dialog, _ ->
                 val newItem = view.findViewById(R.id.et_add_item) as EditText
-                viewModel.handleAddNote(newItem.text.toString(), true)
+                viewModel.handleAddNote(
+                        newItem.text.toString(),
+                        false,
+                        "Fareez",
+                        101)
             }
             .setNegativeButton("Cancel"){dialog, _ -> dialog.cancel()}
         val dialog = adb.setView(view).create()
@@ -97,6 +103,17 @@ class DashboardFragment : Fragment() {
 
         adapter.onItemClick= {
             Log.i("CLICK ", it.item.toString())
+        }
+
+        adapter.onCheckBoxClick = {
+
+            if(it.isChecked){
+                viewModel.handleNoteItemIsChecked(true, it.id)
+                Log.i("CHECK", it.toString())
+            }else{
+                viewModel.handleNoteItemIsChecked(false, it.id)
+                Log.i("CHECK", it.toString())
+            }
         }
 
         val swipeHandler = object : SwipeToDeleteCallback(requireContext()) {

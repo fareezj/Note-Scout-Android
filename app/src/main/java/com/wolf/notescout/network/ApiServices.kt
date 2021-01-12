@@ -15,6 +15,9 @@ interface ApiServices {
     @PUT("/groceries")
     fun addNoteItem(@Body noteData: NoteRestData.NoteData): Observable<NoteRestData.NoteData>
 
+    @PUT("/groceries/isChecked/{id}")
+    fun updateIsChecked(@Body isChecked: Boolean, @Path("id") id: Long): Observable<NoteRestData.NoteData>
+
     @DELETE("/groceries/{id}")
     fun deleteNoteItem(@Path("id") id: Long): Observable<NoteRestData.NoteData>
 

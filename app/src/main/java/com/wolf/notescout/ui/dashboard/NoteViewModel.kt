@@ -25,11 +25,13 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         return noteAPI.getGroceries()
     }
 
-    fun handleAddNote(item: String, isAvailable: Boolean) {
+    fun handleAddNote(item: String, isChecked: Boolean, username: String, groupID: Long) {
         val subscribe = noteAPI.addNoteItem(
             NoteRestData.NoteData(
-                item = item,
-                isAvailable = isAvailable
+                    item = item,
+                    isChecked = isChecked,
+                    username = username,
+                    groupID = groupID
             )
         )
             .subscribeOn(Schedulers.io())
@@ -39,6 +41,17 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
             }, { err -> var msg = err.localizedMessage
                 Log.i("DATA", msg.toString())
             })
+        subscription.add(subscribe)
+    }
+
+    fun handleNoteItemIsChecked(isChecked: Boolean, id: Long){
+        val subscribe = noteAPI.updateIsChecked(isChecked, id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                }, { err -> var msg = err.localizedMessage
+                    Log.i("DATA", msg.toString())
+                })
         subscription.add(subscribe)
     }
 
