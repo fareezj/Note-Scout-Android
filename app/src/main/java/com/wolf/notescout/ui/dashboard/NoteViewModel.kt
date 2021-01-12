@@ -86,12 +86,16 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ it ->
                 if(it != null) {
+
+                    //MANAGE ITEM COMPLETED LOGIC//
                     _allNotesData.value = it
                     completedNote.clear()
                     it.map {
                         completedNote.add(it)
                     }
-                    
+                    getCompletedNote()
+                    //MANAGE ITEM COMPLETED LOGIC//
+
                 }else{
                     Log.i("DATA", "NULL")
                 }
