@@ -27,6 +27,7 @@ class NoteListAdapter (context: Context?, var items: ArrayList<NoteRestData.Note
         if (holder is NoteItemViewHolder) {
             holder.itemView.tv_note_item.text = items[position].item
             holder.itemView.tv_user_note.text = "By: ${items[position].username}"
+            holder.itemView.cb_isChecked.isChecked = items[position].isChecked
         }
     }
 

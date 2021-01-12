@@ -91,8 +91,7 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
                     it.map {
                         completedNote.add(it)
                     }
-
-                    Log.i("DATA", it.toString())
+                    
                 }else{
                     Log.i("DATA", "NULL")
                 }
