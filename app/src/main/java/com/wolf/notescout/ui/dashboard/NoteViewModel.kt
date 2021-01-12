@@ -14,25 +14,29 @@ import io.reactivex.schedulers.Schedulers
 
 class NoteViewModel(application: Application): AndroidViewModel(application) {
 
+    private var completedNote: ArrayList<NoteRestData.NoteData> = arrayListOf()
+
     private var noteAPI: ApiServices = ApiServices.getServices()
     private var subscription = CompositeDisposable()
 
     private val _allNotesData = MutableLiveData<List<NoteRestData.NoteData>>()
     val allNotesData: LiveData<List<NoteRestData.NoteData>> = _allNotesData
 
-//    private val _completedTask = MutableLiveData<Int>()
-//    val completedTask: LiveData<Int> = _completedTask
+    private val _completedTask = MutableLiveData<Int>(0)
+    val completedTask: LiveData<Int> = _completedTask
 
     private fun getAllNotesFromApi(): Observable<List<NoteRestData.NoteData>>{
         return noteAPI.getGroceries()
     }
-//
-//    fun getCompletedTask() {
-//        allNotesData.map { value ->
-//            val completedNote = value.filter { it.isChecked }
-//            _completedTask.value = completedNote.size
-//        }
-//    }
+
+     fun getCompletedNote() {
+
+         _completedTask.value = 0
+        val filteredNote = completedNote.filter { it.isChecked }
+        _completedTask.value = filteredNote.size
+        Log.i("FILTETED DONE TASK:", filteredNote.size.toString())
+
+    }
 
     fun handleAddNote(item: String, isChecked: Boolean, username: String, groupID: Long) {
         val subscribe = noteAPI.addNoteItem(
@@ -80,9 +84,14 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         val subscribe = getAllNotesFromApi()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
+            .subscribe({ it ->
                 if(it != null) {
                     _allNotesData.value = it
+                    completedNote.clear()
+                    it.map {
+                        completedNote.add(it)
+                    }
+
                     Log.i("DATA", it.toString())
                 }else{
                     Log.i("DATA", "NULL")

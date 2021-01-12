@@ -48,6 +48,8 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
         viewModel.handleGetAllNotesFromApi()
 //        viewModel.completedTask.observe(viewLifecycleOwner, Observer {
 //            completedTask = it
@@ -55,6 +57,7 @@ class DashboardFragment : Fragment() {
 //        })
 
         viewModel.allNotesData.observe(viewLifecycleOwner, Observer {
+
             noteItemList = it as ArrayList<NoteRestData.NoteData>
             setupAdapter(noteItemList)
         })
@@ -108,12 +111,13 @@ class DashboardFragment : Fragment() {
         }
 
         adapter.onCheckBoxClick = {
-
             if(it.isChecked){
                 viewModel.handleNoteItemIsChecked(true, it.id)
+                viewModel.getCompletedNote()
                 Log.i("CHECK", it.toString())
             }else{
                 viewModel.handleNoteItemIsChecked(false, it.id)
+                viewModel.getCompletedNote()
                 Log.i("CHECK", it.toString())
             }
         }
