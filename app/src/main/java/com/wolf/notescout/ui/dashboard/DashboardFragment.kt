@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.wolf.notescout.R
 import com.wolf.notescout.data.model.NoteRestData
 import com.wolf.notescout.databinding.FragmentDashboardBinding
+import com.wolf.notescout.util.SharedPreferencesUtil
 import com.wolf.notescout.util.SwipeToDeleteCallback
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -34,6 +35,7 @@ class DashboardFragment : Fragment() {
     private lateinit var adapter: NoteListAdapter
     private lateinit var viewModel: NoteViewModel
     private lateinit var binding: FragmentDashboardBinding
+    private var isFirstTime: Boolean = false
     private var noteItemList: ArrayList<NoteRestData.NoteData> = arrayListOf()
 
     override fun onCreateView(
@@ -50,6 +52,7 @@ class DashboardFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
+        setupComponent()
         viewModel.handleGetAllNotesFromApi()
 //        viewModel.completedTask.observe(viewLifecycleOwner, Observer {
 //            completedTask = it
@@ -62,7 +65,6 @@ class DashboardFragment : Fragment() {
             setupAdapter(noteItemList)
         })
 
-        setupComponent()
 
         binding.srlNoteList.setOnRefreshListener {
             viewModel.handleGetAllNotesFromApi()
@@ -79,6 +81,14 @@ class DashboardFragment : Fragment() {
     private fun setupComponent() {
         binding.srlNoteList.setColorSchemeColors(Color.BLUE)
         binding.srlNoteList.setProgressBackgroundColorSchemeColor(Color.GREEN)
+
+        val firstTime: Boolean = SharedPreferencesUtil.isFirstTime
+        if(firstTime){
+            Log.i("ACCESS", firstTime.toString())
+        }else{
+            Log.i("ACCESS", "Not first time")
+        }
+        SharedPreferencesUtil.isFirstTime = false
 
     }
 

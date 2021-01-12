@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.wolf.notescout.data.model.NoteRestData
 import com.wolf.notescout.network.ApiServices
+import com.wolf.notescout.util.SharedPreferencesUtil
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
