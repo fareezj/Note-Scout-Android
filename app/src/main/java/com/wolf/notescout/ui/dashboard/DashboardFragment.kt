@@ -53,6 +53,7 @@ class DashboardFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
         setupComponent()
+        viewModel.getCurrentUser()
         viewModel.handleGetAllNotesFromApi()
 //        viewModel.completedTask.observe(viewLifecycleOwner, Observer {
 //            completedTask = it
@@ -84,12 +85,27 @@ class DashboardFragment : Fragment() {
 
         val firstTime: Boolean = SharedPreferencesUtil.isFirstTime
         if(firstTime){
-            Log.i("ACCESS", firstTime.toString())
+            val userDialog = setupNewUsername()
+            userDialog.show()
         }else{
             Log.i("ACCESS", "Not first time")
         }
         SharedPreferencesUtil.isFirstTime = false
 
+    }
+
+    private fun setupNewUsername(): AlertDialog {
+        val view = LayoutInflater.from(requireContext()).inflate(R.layout.add_new_username, null)
+        val adb = AlertDialog.Builder(requireContext())
+                .setTitle("Add New Note Item")
+                .setPositiveButton("OK"){dialog, _ ->
+                    val newUser = view.findViewById(R.id.et_username) as EditText
+                    SharedPreferencesUtil.username = newUser.toString()
+                }
+                .setNegativeButton("Cancel"){dialog, _ -> dialog.cancel()}
+        val dialog = adb.setView(view).create()
+        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        return dialog
     }
 
     private fun setupAddNewNoteItem(): AlertDialog {

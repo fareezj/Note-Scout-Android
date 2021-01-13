@@ -29,6 +29,9 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
     private val _totalTask = MutableLiveData<Int>(0)
     val totalTask: LiveData<Int> = _totalTask
 
+    private val _currentUser = MutableLiveData<String>()
+    val currentUser: LiveData<String> = _currentUser
+
     private fun getAllNotesFromApi(): Observable<List<NoteRestData.NoteData>>{
         return noteAPI.getGroceries()
     }
@@ -40,6 +43,12 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         _completedTask.value = filteredNote.size
         Log.i("FILTETED DONE TASK:", filteredNote.size.toString())
 
+    }
+
+    fun getCurrentUser(){
+        val fetchedUser: String? = SharedPreferencesUtil.username
+        Log.i("USER",SharedPreferencesUtil.username.toString())
+        _currentUser.value = fetchedUser
     }
 
     fun handleAddNote(item: String, isChecked: Boolean, username: String, groupID: Long) {

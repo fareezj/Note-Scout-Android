@@ -25,13 +25,22 @@ object SharedPreferencesUtil {
         get() {
             return preferences.getBoolean(SharedPreferenceKeys.IS_FIRST_TIME.value, true)
         }
-    set(state) {
-        preferences.edit().putBoolean(SharedPreferenceKeys.IS_FIRST_TIME.value, state).apply()
-    }
+        set(state) {
+            preferences.edit().putBoolean(SharedPreferenceKeys.IS_FIRST_TIME.value, state).apply()
+        }
+
+    var username: String?
+        get() {
+            return preferences.getString(SharedPreferenceKeys.CURRENT_USERNAME.value, "")
+        }
+        set(name) {
+            preferences.edit().putString(SharedPreferenceKeys.CURRENT_USERNAME.value, name).apply()
+        }
 
 }
 
 private enum class SharedPreferenceKeys(val value: String){
     SHARED_PREFS_FILE("bonuslinksharedprefs"),
-    IS_FIRST_TIME("isFirstTime")
+    IS_FIRST_TIME("isFirstTime"),
+    CURRENT_USERNAME("username")
 }
