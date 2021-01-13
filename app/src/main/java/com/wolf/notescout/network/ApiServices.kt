@@ -12,6 +12,9 @@ interface ApiServices {
     @GET("/groceries/")
     fun getGroceries(): Observable<List<NoteRestData.NoteData>>
 
+    @GET("/groceries/group/{groupId}")
+    fun getNoteItemByGroup(@Path("groupId") groupId: Int): Observable<List<NoteRestData.NoteData>>
+
     @PUT("/groceries")
     fun addNoteItem(@Body noteData: NoteRestData.NoteData): Observable<NoteRestData.NoteData>
 

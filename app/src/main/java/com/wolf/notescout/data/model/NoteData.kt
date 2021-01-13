@@ -18,7 +18,7 @@ class NoteRestData {
         var username: String? = "",
 
         @SerializedName("groupID")
-        var groupID: Long = 0
+        var groupID: Int = 0
     )
 }
 

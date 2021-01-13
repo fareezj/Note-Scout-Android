@@ -53,8 +53,7 @@ class DashboardFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
         setupComponent()
-        viewModel.getCurrentUser()
-        viewModel.handleGetAllNotesFromApi()
+        viewModel.handleGetNotesByGroupId(100)
 //        viewModel.completedTask.observe(viewLifecycleOwner, Observer {
 //            completedTask = it
 //            Log.i("COMPLETED TASK:", it.toString())
@@ -68,7 +67,7 @@ class DashboardFragment : Fragment() {
 
 
         binding.srlNoteList.setOnRefreshListener {
-            viewModel.handleGetAllNotesFromApi()
+            viewModel.handleGetNotesByGroupId(100)
             binding.srlNoteList.isRefreshing = false
         }
 
@@ -91,6 +90,7 @@ class DashboardFragment : Fragment() {
             Log.i("ACCESS", "Not first time")
         }
         SharedPreferencesUtil.isFirstTime = false
+        viewModel.getCurrentUser()
 
     }
 
@@ -100,7 +100,8 @@ class DashboardFragment : Fragment() {
                 .setTitle("Add New Note Item")
                 .setPositiveButton("OK"){dialog, _ ->
                     val newUser = view.findViewById(R.id.et_username) as EditText
-                    SharedPreferencesUtil.username = newUser.toString()
+                    SharedPreferencesUtil.username = newUser.text.toString()
+                    viewModel.getCurrentUser()
                 }
                 .setNegativeButton("Cancel"){dialog, _ -> dialog.cancel()}
         val dialog = adb.setView(view).create()
@@ -118,7 +119,7 @@ class DashboardFragment : Fragment() {
                         newItem.text.toString(),
                         false,
                         SharedPreferencesUtil.username.toString(),
-                        101)
+                        110)
             }
             .setNegativeButton("Cancel"){dialog, _ -> dialog.cancel()}
         val dialog = adb.setView(view).create()
