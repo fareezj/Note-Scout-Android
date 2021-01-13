@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.wolf.notescout"
-        minSdkVersion 16
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -46,7 +46,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-
+    implementation "androidx.security:security-crypto:1.0.0-rc03"
     implementation 'com.android.support:multidex:1.0.3'
 
 
