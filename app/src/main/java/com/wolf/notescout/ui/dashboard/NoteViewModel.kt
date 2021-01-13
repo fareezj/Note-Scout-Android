@@ -15,7 +15,7 @@ import io.reactivex.schedulers.Schedulers
 
 class NoteViewModel(application: Application): AndroidViewModel(application) {
 
-    private var completedNote: ArrayList<NoteRestData.NoteData> = arrayListOf()
+    private var allNotesCheck: ArrayList<NoteRestData.NoteData> = arrayListOf()
 
     private var noteAPI: ApiServices = ApiServices.getServices()
     private var subscription = CompositeDisposable()
@@ -26,6 +26,9 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
     private val _completedTask = MutableLiveData<Int>(0)
     val completedTask: LiveData<Int> = _completedTask
 
+    private val _totalTask = MutableLiveData<Int>(0)
+    val totalTask: LiveData<Int> = _totalTask
+
     private fun getAllNotesFromApi(): Observable<List<NoteRestData.NoteData>>{
         return noteAPI.getGroceries()
     }
@@ -33,7 +36,7 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
      fun getCompletedNote() {
 
          _completedTask.value = 0
-        val filteredNote = completedNote.filter { it.isChecked }
+        val filteredNote = allNotesCheck.filter { it.isChecked }
         _completedTask.value = filteredNote.size
         Log.i("FILTETED DONE TASK:", filteredNote.size.toString())
 
@@ -88,11 +91,15 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
             .subscribe({ it ->
                 if(it != null) {
 
+                    //GET TOTAL TASK//
+                    _totalTask.value = it.size
+                    //GET TOTAL TASK//
+
                     //MANAGE ITEM COMPLETED LOGIC//
                     _allNotesData.value = it
-                    completedNote.clear()
+                    allNotesCheck.clear()
                     it.map {
-                        completedNote.add(it)
+                        allNotesCheck.add(it)
                     }
                     getCompletedNote()
                     //MANAGE ITEM COMPLETED LOGIC//
