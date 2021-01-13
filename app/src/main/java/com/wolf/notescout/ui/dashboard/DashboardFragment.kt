@@ -37,6 +37,7 @@ class DashboardFragment : Fragment() {
     private lateinit var binding: FragmentDashboardBinding
     private var isFirstTime: Boolean = false
     private var noteItemList: ArrayList<NoteRestData.NoteData> = arrayListOf()
+    private val groupId = SharedPreferencesUtil.groupId
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +54,7 @@ class DashboardFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
         setupComponent()
-        viewModel.handleGetNotesByGroupId(100)
+        viewModel.handleGetNotesByGroupId(groupId)
 //        viewModel.completedTask.observe(viewLifecycleOwner, Observer {
 //            completedTask = it
 //            Log.i("COMPLETED TASK:", it.toString())
@@ -67,7 +68,7 @@ class DashboardFragment : Fragment() {
 
 
         binding.srlNoteList.setOnRefreshListener {
-            viewModel.handleGetNotesByGroupId(100)
+            viewModel.handleGetNotesByGroupId(groupId)
             binding.srlNoteList.isRefreshing = false
         }
 

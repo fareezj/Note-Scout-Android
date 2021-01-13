@@ -37,10 +37,19 @@ object SharedPreferencesUtil {
             preferences.edit().putString(SharedPreferenceKeys.CURRENT_USERNAME.value, name).apply()
         }
 
+    var groupId: Int
+        get() {
+            return preferences.getInt(SharedPreferenceKeys.GROUP_ID.value, 0)
+        }
+        set(groupId) {
+            preferences.edit().putInt(SharedPreferenceKeys.GROUP_ID.value, groupId).apply()
+        }
+
 }
 
 private enum class SharedPreferenceKeys(val value: String){
     SHARED_PREFS_FILE("bonuslinksharedprefs"),
     IS_FIRST_TIME("isFirstTime"),
-    CURRENT_USERNAME("username")
+    CURRENT_USERNAME("username"),
+    GROUP_ID("groupId")
 }
