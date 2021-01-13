@@ -117,7 +117,7 @@ class DashboardFragment : Fragment() {
                 viewModel.handleAddNote(
                         newItem.text.toString(),
                         false,
-                        "Fareez",
+                        SharedPreferencesUtil.username.toString(),
                         101)
             }
             .setNegativeButton("Cancel"){dialog, _ -> dialog.cancel()}
