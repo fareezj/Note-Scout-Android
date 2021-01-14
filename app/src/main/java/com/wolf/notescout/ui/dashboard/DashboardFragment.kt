@@ -120,7 +120,7 @@ class DashboardFragment : Fragment() {
                         newItem.text.toString(),
                         false,
                         SharedPreferencesUtil.username.toString(),
-                        110)
+                        SharedPreferencesUtil.groupId)
             }
             .setNegativeButton("Cancel"){dialog, _ -> dialog.cancel()}
         val dialog = adb.setView(view).create()

@@ -63,7 +63,7 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                handleGetAllNotesFromApi()
+                handleGetNotesByGroupId(SharedPreferencesUtil.groupId)
             }, { err -> var msg = err.localizedMessage
                 Log.i("DATA", msg.toString())
             })
@@ -86,7 +86,7 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    handleGetAllNotesFromApi()
+                    handleGetNotesByGroupId(SharedPreferencesUtil.groupId)
                 }, { err -> var msg = err.localizedMessage
                     Log.i("DATA", msg.toString())
                 })
