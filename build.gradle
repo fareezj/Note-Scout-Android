@@ -13,6 +13,7 @@ buildscript {
         kotlin_version = "1.4.10"
         koin_version = "2.0.1"
         roomVersion = '2.2.5'
+        work = "2.4.0"
     }
     repositories {
         google()

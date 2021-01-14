@@ -8,11 +8,13 @@ class MainApp: Application() {
 
     companion object {
         lateinit var appContext: Context
+        lateinit var application: Application
     }
 
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
+        application = Application()
         SharedPreferencesUtil.init(applicationContext)
     }
 }

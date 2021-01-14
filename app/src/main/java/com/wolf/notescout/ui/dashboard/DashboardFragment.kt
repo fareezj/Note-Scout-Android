@@ -1,20 +1,19 @@
 package com.wolf.notescout.ui.dashboard
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.EditText
-import android.widget.SimpleAdapter
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,12 +22,10 @@ import com.wolf.notescout.data.model.NoteRestData
 import com.wolf.notescout.databinding.FragmentDashboardBinding
 import com.wolf.notescout.util.SharedPreferencesUtil
 import com.wolf.notescout.util.SwipeToDeleteCallback
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.add_item_dialog.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.item_note.*
+import java.util.*
 
 class DashboardFragment : Fragment() {
 
@@ -38,6 +35,7 @@ class DashboardFragment : Fragment() {
     private var isFirstTime: Boolean = false
     private var noteItemList: ArrayList<NoteRestData.NoteData> = arrayListOf()
     private val groupId = SharedPreferencesUtil.groupId
+    //private var timer = Timer()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,6 +75,25 @@ class DashboardFragment : Fragment() {
         binding.fabAddNote.setOnClickListener {
             dialog.show()
         }
+//        timer.schedule(object : TimerTask() {
+//            override fun run() {
+//                viewModel.runWorkers()
+//            }
+//        }, 3 * 1000)
+
+        val mainHandler = Handler(Looper.getMainLooper())
+
+        mainHandler.post(object : Runnable {
+            override fun run() {
+                viewModel.handleGetNotesByGroupId(SharedPreferencesUtil.groupId)
+                mainHandler.postDelayed(this, 3000)
+            }
+        })
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
     private fun setupComponent() {
@@ -99,12 +116,12 @@ class DashboardFragment : Fragment() {
         val view = LayoutInflater.from(requireContext()).inflate(R.layout.add_new_username, null)
         val adb = AlertDialog.Builder(requireContext())
                 .setTitle("Add New Note Item")
-                .setPositiveButton("OK"){dialog, _ ->
+                .setPositiveButton("OK"){ dialog, _ ->
                     val newUser = view.findViewById(R.id.et_username) as EditText
                     SharedPreferencesUtil.username = newUser.text.toString()
                     viewModel.getCurrentUser()
                 }
-                .setNegativeButton("Cancel"){dialog, _ -> dialog.cancel()}
+                .setNegativeButton("Cancel"){ dialog, _ -> dialog.cancel()}
         val dialog = adb.setView(view).create()
         dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         return dialog
@@ -114,22 +131,27 @@ class DashboardFragment : Fragment() {
         val view = LayoutInflater.from(requireContext()).inflate(R.layout.add_item_dialog, null)
         val adb = AlertDialog.Builder(requireContext())
             .setTitle("Add New Note Item")
-            .setPositiveButton("OK"){dialog, _ ->
+            .setPositiveButton("OK"){ dialog, _ ->
                 val newItem = view.findViewById(R.id.et_add_item) as EditText
                 viewModel.handleAddNote(
-                        newItem.text.toString(),
-                        false,
-                        SharedPreferencesUtil.username.toString(),
-                        SharedPreferencesUtil.groupId)
+                    newItem.text.toString(),
+                    false,
+                    SharedPreferencesUtil.username.toString(),
+                    SharedPreferencesUtil.groupId
+                )
             }
-            .setNegativeButton("Cancel"){dialog, _ -> dialog.cancel()}
+            .setNegativeButton("Cancel"){ dialog, _ -> dialog.cancel()}
         val dialog = adb.setView(view).create()
         dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         return dialog
     }
 
     private fun setupAdapter(noteList: ArrayList<NoteRestData.NoteData>) {
-        binding.rvNoteList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.rvNoteList.layoutManager = LinearLayoutManager(
+            context,
+            LinearLayoutManager.VERTICAL,
+            false
+        )
         binding.rvNoteList.setHasFixedSize(true)
         adapter = NoteListAdapter(context, noteItemList)
         binding.rvNoteList.adapter = adapter

@@ -4,9 +4,13 @@ import android.app.Application
 import android.text.BoringLayout
 import android.util.Log
 import androidx.lifecycle.*
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.wolf.notescout.data.model.NoteRestData
 import com.wolf.notescout.network.ApiServices
 import com.wolf.notescout.util.SharedPreferencesUtil
+import com.wolf.notescout.worker.GetNotesRegular
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -31,6 +35,8 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
 
     private val _currentUser = MutableLiveData<String>()
     val currentUser: LiveData<String> = _currentUser
+
+    private val workManager = WorkManager.getInstance(application)
 
     private fun getAllNotesFromApi(): Observable<List<NoteRestData.NoteData>>{
         return noteAPI.getGroceries()
@@ -123,35 +129,10 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         subscription.add(subscribe)
     }
 
-
-    fun handleGetAllNotesFromApi() {
-        val subscribe = getAllNotesFromApi()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ it ->
-                if(it != null) {
-
-                    //GET TOTAL TASK//
-                    _totalTask.value = it.size
-                    //GET TOTAL TASK//
-
-                    //MANAGE ITEM COMPLETED LOGIC//
-                    _allNotesData.value = it
-                    allNotesCheck.clear()
-                    it.map {
-                        allNotesCheck.add(it)
-                    }
-                    getCompletedNote()
-                    //MANAGE ITEM COMPLETED LOGIC//
-
-                }else{
-                    Log.i("DATA", "NULL")
-                }
-            }, {
-                    err -> var msg = err.localizedMessage
-                Log.i("DATA", msg.toString())
-            })
-        subscription.add(subscribe)
+    internal fun runWorkers() {
+        val runCallTask = OneTimeWorkRequestBuilder<GetNotesRegular>()
+            .build()
+        workManager.enqueue(runCallTask)
     }
 
     override fun onCleared() {
