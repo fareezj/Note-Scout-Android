@@ -36,9 +36,6 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
     private val _currentUser = MutableLiveData<String>()
     val currentUser: LiveData<String> = _currentUser
 
-    private val _noteNotFound = MutableLiveData<Boolean>()
-    val noteNotFound: LiveData<Boolean> = _noteNotFound
-
     private val workManager = WorkManager.getInstance(application)
 
     private fun getAllNotesFromApi(): Observable<List<NoteRestData.NoteData>>{
