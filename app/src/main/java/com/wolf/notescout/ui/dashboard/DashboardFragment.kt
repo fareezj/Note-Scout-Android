@@ -25,6 +25,7 @@ import com.wolf.notescout.util.SwipeToDeleteCallback
 import kotlinx.android.synthetic.main.add_item_dialog.*
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import kotlinx.android.synthetic.main.item_note.*
+import timber.log.Timber
 import java.util.*
 
 class DashboardFragment : Fragment() {

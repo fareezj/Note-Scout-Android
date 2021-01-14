@@ -36,6 +36,9 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
     private val _currentUser = MutableLiveData<String>()
     val currentUser: LiveData<String> = _currentUser
 
+    private val _noteNotFound = MutableLiveData<Boolean>()
+    val noteNotFound: LiveData<Boolean> = _noteNotFound
+
     private val workManager = WorkManager.getInstance(application)
 
     private fun getAllNotesFromApi(): Observable<List<NoteRestData.NoteData>>{
@@ -99,12 +102,16 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         subscription.add(subscribe)
     }
 
+    fun handleCheckNotesExistance(groupID: Int): Observable<List<NoteRestData.NoteData>>{
+        return noteAPI.getNoteItemByGroup(groupID)
+    }
+
     fun handleGetNotesByGroupId(groupID: Int){
         val subscribe = noteAPI.getNoteItemByGroup(groupID)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ it ->
-                    if(it != null) {
+                    if(!it.isNullOrEmpty()) {
 
                         //GET TOTAL TASK//
                         _totalTask.value = it.size
@@ -120,6 +127,7 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
                         //MANAGE ITEM COMPLETED LOGIC//
 
                     }else{
+                        _noteNotFound.value = true
                         Log.i("DATA", "NULL")
                     }
                 }, {
