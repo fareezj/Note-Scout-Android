@@ -28,6 +28,8 @@ class NoteListAdapter (context: Context?, var items: ArrayList<NoteRestData.Note
             holder.itemView.tv_note_item.text = items[position].item
             holder.itemView.tv_user_note.text = "By: ${items[position].username}"
             holder.itemView.cb_isChecked.isChecked = items[position].isChecked
+            holder.itemView.tv_note_id.text = items[position].id.toString()
+            holder.itemView.tv_note_group_id.text = items[position].groupID.toString()
         }
     }
 
