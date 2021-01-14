@@ -153,4 +153,9 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
             })
         subscription.add(subscribe)
     }
+
+    override fun onCleared() {
+        subscription.clear()
+        super.onCleared()
+    }
 }
