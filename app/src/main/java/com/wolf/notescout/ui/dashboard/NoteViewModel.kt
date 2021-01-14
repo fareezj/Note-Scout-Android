@@ -124,7 +124,6 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
                         //MANAGE ITEM COMPLETED LOGIC//
 
                     }else{
-                        _noteNotFound.value = true
                         Log.i("DATA", "NULL")
                     }
                 }, {
