@@ -131,34 +131,9 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         subscription.add(subscribe)
     }
 
-    //    fun handleGetAllNotesFromApi() {
-//        val subscribe = getAllNotesFromApi()
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe({ it ->
-//                if(it != null) {
-//
-//                    //GET TOTAL TASK//
-//                    _totalTask.value = it.size
-//                    //GET TOTAL TASK//
-//
-//                    //MANAGE ITEM COMPLETED LOGIC//
-//                    _allNotesData.value = it
-//                    allNotesCheck.clear()
-//                    it.map {
-//                        allNotesCheck.add(it)
-//                    }
-//                    //MANAGE ITEM COMPLETED LOGIC//
-//
-//                }else{
-//                    Log.i("DATA", "NULL")
-//                }
-//            }, {
-//                    err -> var msg = err.localizedMessage
-//                Log.i("DATA", msg.toString())
-//            })
-//        subscription.add(subscribe)
-//    }
+    fun handleCheckNotesExistence(groupID: Int): Observable<List<NoteRestData.NoteData>>{
+        return noteAPI.getNoteItemByGroup(groupID)
+    }
 
 
     override fun onCleared() {
