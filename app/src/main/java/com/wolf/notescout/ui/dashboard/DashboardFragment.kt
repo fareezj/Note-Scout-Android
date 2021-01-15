@@ -118,7 +118,7 @@ class DashboardFragment : Fragment() {
                 val newItem = view.findViewById(R.id.et_add_item) as EditText
                 viewModel.handleAddNote(
                         newItem.text.toString(),
-                        false,
+                        0,
                         SharedPreferencesUtil.username.toString(),
                         SharedPreferencesUtil.groupId)
             }
@@ -139,12 +139,12 @@ class DashboardFragment : Fragment() {
         }
 
         adapter.onCheckBoxClick = {
-            if(it.isChecked){
-                viewModel.handleNoteItemIsChecked(true, it.id)
+            if(it.isChecked == 1){
+                viewModel.handleNoteItemIsChecked(0, it.id)
                 viewModel.getCompletedNote()
                 Log.i("CHECK", it.toString())
             }else{
-                viewModel.handleNoteItemIsChecked(false, it.id)
+                viewModel.handleNoteItemIsChecked(1, it.id)
                 viewModel.getCompletedNote()
                 Log.i("CHECK", it.toString())
             }

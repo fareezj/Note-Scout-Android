@@ -39,7 +39,7 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
      fun getCompletedNote() {
 
          _completedTask.value = 0
-        val filteredNote = allNotesCheck.filter { it.isChecked }
+        val filteredNote = allNotesCheck.filter { it.isChecked == 1 }
         _completedTask.value = filteredNote.size
         Log.i("FILTETED DONE TASK:", filteredNote.size.toString())
 
@@ -51,7 +51,7 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         _currentUser.value = fetchedUser
     }
 
-    fun handleAddNote(item: String, isChecked: Boolean, username: String, groupID: Int) {
+    fun handleAddNote(item: String, isChecked: Int, username: String, groupID: Int) {
         val subscribe = noteAPI.addNoteItem(
             NoteRestData.NoteData(
                     item = item,
@@ -70,7 +70,7 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         subscription.add(subscribe)
     }
 
-    fun handleNoteItemIsChecked(isChecked: Boolean, id: Long){
+    fun handleNoteItemIsChecked(isChecked: Int, id: Long){
         val subscribe = noteAPI.updateIsChecked(isChecked, id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -95,37 +95,6 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
 
     fun handleGetNotesByGroupId(groupID: Int){
         val subscribe = noteAPI.getNoteItemByGroup(groupID)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ it ->
-                    if(it != null) {
-
-                        //GET TOTAL TASK//
-                        _totalTask.value = it.size
-                        //GET TOTAL TASK//
-
-                        //MANAGE ITEM COMPLETED LOGIC//
-                        _allNotesData.value = it
-                        allNotesCheck.clear()
-                        it.map {
-                            allNotesCheck.add(it)
-                        }
-                        getCompletedNote()
-                        //MANAGE ITEM COMPLETED LOGIC//
-
-                    }else{
-                        Log.i("DATA", "NULL")
-                    }
-                }, {
-                    err -> var msg = err.localizedMessage
-                    Log.i("DATA", msg.toString())
-                })
-        subscription.add(subscribe)
-    }
-
-
-    fun handleGetAllNotesFromApi() {
-        val subscribe = getAllNotesFromApi()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ it ->
@@ -135,13 +104,15 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
                     _totalTask.value = it.size
                     //GET TOTAL TASK//
 
-                    //MANAGE ITEM COMPLETED LOGIC//
+                    //ASSIGN DATA//
                     _allNotesData.value = it
+                    //ASSIGN DATA//
+
+                    //MANAGE ITEM COMPLETED LOGIC//
                     allNotesCheck.clear()
                     it.map {
                         allNotesCheck.add(it)
                     }
-                    getCompletedNote()
                     //MANAGE ITEM COMPLETED LOGIC//
 
                 }else{
@@ -153,6 +124,36 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
             })
         subscription.add(subscribe)
     }
+
+    //    fun handleGetAllNotesFromApi() {
+//        val subscribe = getAllNotesFromApi()
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe({ it ->
+//                if(it != null) {
+//
+//                    //GET TOTAL TASK//
+//                    _totalTask.value = it.size
+//                    //GET TOTAL TASK//
+//
+//                    //MANAGE ITEM COMPLETED LOGIC//
+//                    _allNotesData.value = it
+//                    allNotesCheck.clear()
+//                    it.map {
+//                        allNotesCheck.add(it)
+//                    }
+//                    //MANAGE ITEM COMPLETED LOGIC//
+//
+//                }else{
+//                    Log.i("DATA", "NULL")
+//                }
+//            }, {
+//                    err -> var msg = err.localizedMessage
+//                Log.i("DATA", msg.toString())
+//            })
+//        subscription.add(subscribe)
+//    }
+
 
     override fun onCleared() {
         subscription.clear()
