@@ -70,8 +70,14 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         subscription.add(subscribe)
     }
 
-    fun handleNoteItemIsChecked(isChecked: Int, id: Long){
-        val subscribe = noteAPI.updateIsChecked(isChecked, id)
+    fun handleNoteItemIsChecked(isChecked: Int, id: Int){
+
+        var isCheckedBool = false
+
+        if(isChecked == 1){
+            isCheckedBool = true
+        }
+        val subscribe = noteAPI.updateIsChecked(isCheckedBool, id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -81,7 +87,7 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         subscription.add(subscribe)
     }
 
-    fun handleDeleteNoteItem(id: Long){
+    fun handleDeleteNoteItem(id: Int){
         val subscribe = noteAPI.deleteNoteItem(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

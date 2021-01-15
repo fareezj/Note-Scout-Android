@@ -140,11 +140,11 @@ class DashboardFragment : Fragment() {
 
         adapter.onCheckBoxClick = {
             if(it.isChecked == 1){
-                viewModel.handleNoteItemIsChecked(0, it.id)
+                viewModel.handleNoteItemIsChecked(1, it.id)
                 viewModel.getCompletedNote()
                 Log.i("CHECK", it.toString())
             }else{
-                viewModel.handleNoteItemIsChecked(1, it.id)
+                viewModel.handleNoteItemIsChecked(0, it.id)
                 viewModel.getCompletedNote()
                 Log.i("CHECK", it.toString())
             }

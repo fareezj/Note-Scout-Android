@@ -6,7 +6,7 @@ class NoteRestData {
     data class NoteData(
 
         @SerializedName("id")
-        var id: Long = 0,
+        var id: Int = 0,
 
         @SerializedName("name")
         var item: String = "",
