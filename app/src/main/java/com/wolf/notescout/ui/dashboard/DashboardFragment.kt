@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.wolf.notescout.R
 import com.wolf.notescout.data.model.NoteRestData
 import com.wolf.notescout.databinding.FragmentDashboardBinding
+import com.wolf.notescout.util.RecyclerViewDecorator
 import com.wolf.notescout.util.SharedPreferencesUtil
 import com.wolf.notescout.util.SwipeToDeleteCallback
 import kotlinx.android.synthetic.main.add_item_dialog.*
@@ -84,12 +85,12 @@ class DashboardFragment : Fragment() {
 
         val mainHandler = Handler(Looper.getMainLooper())
 
-        mainHandler.post(object : Runnable {
-            override fun run() {
-                viewModel.handleGetNotesByGroupId(SharedPreferencesUtil.groupId)
-                mainHandler.postDelayed(this, 3000)
-            }
-        })
+//        mainHandler.post(object : Runnable {
+//            override fun run() {
+//                viewModel.handleGetNotesByGroupId(SharedPreferencesUtil.groupId)
+//                mainHandler.postDelayed(this, 3000)
+//            }
+//        })
 
     }
 
@@ -183,6 +184,15 @@ class DashboardFragment : Fragment() {
         }
         val itemTouchHelper = ItemTouchHelper(swipeHandler)
         itemTouchHelper.attachToRecyclerView(rv_note_list)
+
+        binding.rvNoteList.addItemDecoration(
+                RecyclerViewDecorator(
+                        RecyclerViewDecorator.Orientation.VERTICAL,
+                        0f,
+                        0f,
+                        true
+                )
+        )
     }
 
 }

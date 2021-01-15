@@ -32,7 +32,6 @@ class HomeFragment : Fragment() {
     private lateinit var navController: NavController
     private var getGroupID: String = ""
     private var currentUser: String? = ""
-    private var isValid: Boolean = false
     private var subscription = CompositeDisposable()
 
 
@@ -53,16 +52,6 @@ class HomeFragment : Fragment() {
         currentUser = SharedPreferencesUtil.username
         Log.i("CURRENTUSER", currentUser.toString())
 
-        viewModel.noteNotFound.observe(viewLifecycleOwner, Observer {
-            if(it){
-                isValid = false
-                btn_home_submit.isEnabled = false
-                Timber.i("INVALID !!!!")
-            }else{
-                isValid = true
-                btn_home_submit.isEnabled = true
-            }
-        })
 
         if(!currentUser.isNullOrEmpty()){
             showGroupIdCL()
@@ -83,25 +72,17 @@ class HomeFragment : Fragment() {
         btn_home_submit.setOnClickListener {
             getGroupID = et_home_groupId.text.toString()
             SharedPreferencesUtil.groupId = getGroupID.toInt()
-            handleGetNotesByGroupId(SharedPreferencesUtil.groupId)
+            handleCheckNotesByGroupId(SharedPreferencesUtil.groupId)
         }
 
         et_new_username.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                val user = s.toString()
-                currentUser = user
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
         })
 
         btn_submit_username.setOnClickListener {
-            SharedPreferencesUtil.username = currentUser
+            SharedPreferencesUtil.username = et_new_username.text.toString()
             SharedPreferencesUtil.isFirstTime = false
             hideNewUserCL()
             showGroupIdCL()
@@ -133,7 +114,7 @@ class HomeFragment : Fragment() {
         btn_home_submit.isEnabled = true
     }
 
-    fun handleGetNotesByGroupId(groupID: Int){
+    private fun handleCheckNotesByGroupId(groupID: Int){
         val subscribe = viewModel.handleCheckNotesExistance(groupID)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
