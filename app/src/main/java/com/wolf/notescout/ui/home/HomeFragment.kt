@@ -4,16 +4,15 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.wolf.notescout.R
-import com.wolf.notescout.databinding.FragmentDashboardBinding
 import com.wolf.notescout.databinding.FragmentHomeBinding
 import com.wolf.notescout.ui.dashboard.NoteViewModel
 import com.wolf.notescout.util.SharedPreferencesUtil
@@ -42,6 +41,9 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+
         viewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
@@ -117,13 +119,13 @@ class HomeFragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ it ->
-                    if(it.isEmpty()) {
+                    if (it.isEmpty()) {
                         Log.i("DATA", "EMPTYYYYYY :PPPPPP")
-                    }else{
+                    } else {
                         navController.navigate(R.id.action_homeFragment_to_dashboardFragment)
                     }
-                }, {
-                    err -> var msg = err.localizedMessage
+                }, { err ->
+                    var msg = err.localizedMessage
                     Log.i("DATA", msg.toString())
                 })
         subscription.add(subscribe)
