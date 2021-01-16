@@ -59,10 +59,8 @@ class DashboardFragment : Fragment() {
         binding.viewModel = viewModel
         setupComponent()
         viewModel.handleGetNotesByGroupId(groupId)
-//        viewModel.completedTask.observe(viewLifecycleOwner, Observer {
-//            completedTask = it
-//            Log.i("COMPLETED TASK:", it.toString())
-//        })
+        viewModel.getCompletedNote()
+
 
         viewModel.allNotesData.observe(viewLifecycleOwner, Observer {
 
