@@ -6,13 +6,13 @@ class NoteRestData {
     data class NoteData(
 
         @SerializedName("id")
-        var id: Long = 0,
+        var id: Int = 0,
 
         @SerializedName("name")
         var item: String = "",
 
         @SerializedName("isChecked")
-        var isChecked: Boolean = false,
+        var isChecked: Int = 0,
 
         @SerializedName("username")
         var username: String? = "",

@@ -17,6 +17,9 @@ import com.wolf.notescout.databinding.FragmentDashboardBinding
 import com.wolf.notescout.databinding.FragmentHomeBinding
 import com.wolf.notescout.ui.dashboard.NoteViewModel
 import com.wolf.notescout.util.SharedPreferencesUtil
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_home.*
 
 
@@ -27,6 +30,7 @@ class HomeFragment : Fragment() {
     private lateinit var navController: NavController
     private var getGroupID: String = ""
     private var currentUser: String? = ""
+    private var subscription = CompositeDisposable()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -46,6 +50,7 @@ class HomeFragment : Fragment() {
         currentUser = SharedPreferencesUtil.username
         Log.i("CURRENTUSER", currentUser.toString())
 
+
         if(!currentUser.isNullOrEmpty()){
             showGroupIdCL()
             hideNewUserCL()
@@ -55,40 +60,27 @@ class HomeFragment : Fragment() {
         }
 
         et_home_groupId.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                val groupId = s.toString()
-                getGroupID = groupId
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
 
         })
 
         btn_home_submit.setOnClickListener {
+            getGroupID = et_home_groupId.text.toString()
             SharedPreferencesUtil.groupId = getGroupID.toInt()
-            navController.navigate(R.id.action_homeFragment_to_dashboardFragment)
+            handleCheckNotesByGroupId(SharedPreferencesUtil.groupId)
         }
 
         et_new_username.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                val user = s.toString()
-                currentUser = user
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
         })
 
         btn_submit_username.setOnClickListener {
-            SharedPreferencesUtil.username = currentUser
+            SharedPreferencesUtil.username = et_new_username.text.toString()
             SharedPreferencesUtil.isFirstTime = false
             hideNewUserCL()
             showGroupIdCL()
@@ -118,5 +110,22 @@ class HomeFragment : Fragment() {
         cl_enter_group_id.visibility = View.VISIBLE
         et_home_groupId.isEnabled = true
         btn_home_submit.isEnabled = true
+    }
+
+    private fun handleCheckNotesByGroupId(groupID: Int){
+        val subscribe = viewModel.handleCheckNotesExistence(groupID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ it ->
+                    if(it.isEmpty()) {
+                        Log.i("DATA", "EMPTYYYYYY :PPPPPP")
+                    }else{
+                        navController.navigate(R.id.action_homeFragment_to_dashboardFragment)
+                    }
+                }, {
+                    err -> var msg = err.localizedMessage
+                    Log.i("DATA", msg.toString())
+                })
+        subscription.add(subscribe)
     }
 }
