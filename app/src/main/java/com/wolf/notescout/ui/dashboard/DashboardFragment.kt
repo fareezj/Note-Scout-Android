@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.SimpleAdapter
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
@@ -50,6 +51,9 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
+
         viewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
