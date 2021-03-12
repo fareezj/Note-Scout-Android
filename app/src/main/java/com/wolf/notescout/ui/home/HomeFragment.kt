@@ -15,6 +15,8 @@ import androidx.navigation.Navigation
 import com.wolf.notescout.R
 import com.wolf.notescout.databinding.FragmentHomeBinding
 import com.wolf.notescout.ui.dashboard.NoteViewModel
+import com.wolf.notescout.ui.dialog.ExistingGroupDialog
+import com.wolf.notescout.ui.dialog.GroupNotFoundDialog
 import com.wolf.notescout.util.SharedPreferencesUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -31,6 +33,8 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var viewModel: NoteViewModel
     private lateinit var navController: NavController
+    private lateinit var existingGroupDialog: ExistingGroupDialog
+    private lateinit var groupNotFoundDialog: GroupNotFoundDialog
     private var getGroupID: String = ""
     private var currentUser: String? = ""
     private var subscription = CompositeDisposable()
@@ -165,7 +169,7 @@ class HomeFragment : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ it ->
                     if (it.isEmpty()) {
-                        Log.i("DATA", "EMPTYYYYYY :PPPPPP")
+                        showGroupNotFoundDialog()
                     } else {
                         navController.navigate(R.id.action_homeFragment_to_dashboardFragment)
                     }
@@ -174,5 +178,15 @@ class HomeFragment : Fragment() {
                     Log.i("DATA", msg.toString())
                 })
         subscription.add(subscribe)
+    }
+
+    private fun showExistingGroupDialog() {
+        existingGroupDialog = ExistingGroupDialog(requireContext())
+        existingGroupDialog.show()
+    }
+
+    private fun showGroupNotFoundDialog() {
+        groupNotFoundDialog = GroupNotFoundDialog(requireContext())
+        groupNotFoundDialog.show()
     }
 }
