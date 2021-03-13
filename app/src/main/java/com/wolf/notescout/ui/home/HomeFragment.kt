@@ -100,7 +100,7 @@ class HomeFragment : Fragment() {
 
         //===============LISTENER EXISTING GROUP=====================
 
-        //===============LISTENER NEW GROUP=====================
+        //===============LISTENER ADD NEW GROUP=====================
 
         et_new_group_id.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -110,15 +110,16 @@ class HomeFragment : Fragment() {
 
         btn_submit_new_group_note.setOnClickListener {
             getGroupID = et_new_group_id.text.toString()
+            val user: String = SharedPreferencesUtil.username!!
             SharedPreferencesUtil.groupId = getGroupID.toInt()
-            handleCheckNotesByGroupId(SharedPreferencesUtil.groupId)
+            handleAddNewGroupNote(getGroupID.toInt(), user)
         }
 
         btn_back_new_group_note.setOnClickListener {
             hideAddNewGroupCV()
         }
 
-        //===============LISTENER NEW GROUP=====================
+        //===============LISTENER ADD NEW GROUP=====================
 
         //===============LISTENER NEW USERNAME =====================
 
@@ -176,6 +177,18 @@ class HomeFragment : Fragment() {
                 }, { err ->
                     var msg = err.localizedMessage
                     Log.i("DATA", msg.toString())
+                })
+        subscription.add(subscribe)
+    }
+
+    fun handleAddNewGroupNote(groupId: Int, groupOwner: String) {
+        val subscribe = viewModel.addNewGroupNotes(groupId, groupOwner)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+
+                }, { err -> val msg = err.localizedMessage
+                    Log.i("DATA", msg!!)
                 })
         subscription.add(subscribe)
     }

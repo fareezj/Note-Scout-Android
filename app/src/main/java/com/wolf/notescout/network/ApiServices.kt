@@ -1,5 +1,6 @@
 package com.wolf.notescout.network
 
+import com.wolf.notescout.data.model.GroupRestData
 import com.wolf.notescout.data.model.NoteRestData
 import io.reactivex.Observable
 import retrofit2.Response
@@ -24,6 +25,9 @@ interface ApiServices {
 
     @DELETE("/scoutnote/{id}")
     fun deleteNoteItem(@Path("id") id: Int): Observable<NoteRestData.NoteData>
+
+    @PUT("/scoutnote/checkGroup/{groupId}/{groupOwner}")
+    fun addNewGroupNote(@Path("groupId") groupId: Int, @Path("groupOwner") groupOwner: String): Observable<GroupRestData.GroupData>
 
     companion object {
         fun getServices(): ApiServices {

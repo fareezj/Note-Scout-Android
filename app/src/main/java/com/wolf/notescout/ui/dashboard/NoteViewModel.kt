@@ -4,6 +4,7 @@ import android.app.Application
 import android.text.BoringLayout
 import android.util.Log
 import androidx.lifecycle.*
+import com.wolf.notescout.data.model.GroupRestData
 import com.wolf.notescout.data.model.NoteRestData
 import com.wolf.notescout.network.ApiServices
 import com.wolf.notescout.util.SharedPreferencesUtil
@@ -34,6 +35,10 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
 
     private fun getAllNotesFromApi(): Observable<List<NoteRestData.NoteData>>{
         return noteAPI.getGroceries()
+    }
+
+    public fun addNewGroupNotes(groupId: Int, groupOwner: String): Observable<GroupRestData.GroupData> {
+        return noteAPI.addNewGroupNote(groupId, groupOwner);
     }
 
      fun getCompletedNote() {
