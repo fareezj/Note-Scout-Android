@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.wolf.notescout.R
+import com.wolf.notescout.data.model.GroupRestData
 import com.wolf.notescout.databinding.FragmentHomeBinding
 import com.wolf.notescout.ui.dashboard.NoteViewModel
 import com.wolf.notescout.ui.dialog.ExistingGroupDialog
@@ -165,10 +166,10 @@ class HomeFragment : Fragment() {
 
 
     private fun handleCheckNotesByGroupId(groupID: Int){
-        val subscribe = viewModel.handleCheckNotesExistence(groupID)
+        val subscribe = viewModel.handleCheckGroupNotesExistence(groupID)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ it ->
+                .subscribe({
                     if (it.isEmpty()) {
                         showGroupNotFoundDialog()
                     } else {
@@ -181,12 +182,17 @@ class HomeFragment : Fragment() {
         subscription.add(subscribe)
     }
 
-    fun handleAddNewGroupNote(groupId: Int, groupOwner: String) {
+    private fun handleAddNewGroupNote(groupId: Int, groupOwner: String) {
         val subscribe = viewModel.addNewGroupNotes(groupId, groupOwner)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-
+                    Log.i("LEKOR", it.toString())
+                    if(it.message.equals("FAILED")) {
+                        showExistingGroupDialog()
+                    }else{
+                        navController.navigate(R.id.action_homeFragment_to_dashboardFragment)
+                    }
                 }, { err -> val msg = err.localizedMessage
                     Log.i("DATA", msg!!)
                 })
