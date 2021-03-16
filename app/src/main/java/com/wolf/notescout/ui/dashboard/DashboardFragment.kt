@@ -59,13 +59,12 @@ class DashboardFragment : Fragment() {
         binding.viewModel = viewModel
         setupComponent()
         viewModel.handleGetNotesByGroupId(groupId)
-        viewModel.getCompletedNote()
+        //viewModel.getCompletedNote()
 
 
         viewModel.allNotesData.observe(viewLifecycleOwner, Observer {
-
             noteItemList = it as ArrayList<NoteRestData.NoteData>
-            setupAdapter(noteItemList)
+            setupAdapter()
         })
 
 
@@ -130,7 +129,7 @@ class DashboardFragment : Fragment() {
         return dialog
     }
 
-    private fun setupAdapter(noteList: ArrayList<NoteRestData.NoteData>) {
+    private fun setupAdapter() {
         binding.rvNoteList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.rvNoteList.setHasFixedSize(true)
         adapter = NoteListAdapter(context, noteItemList)

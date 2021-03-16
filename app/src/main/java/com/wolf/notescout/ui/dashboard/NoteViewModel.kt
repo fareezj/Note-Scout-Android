@@ -120,6 +120,7 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
                     allNotesCheck.clear()
                     it.map {
                         allNotesCheck.add(it)
+                        getCompletedNote()
                     }
                     //MANAGE ITEM COMPLETED LOGIC//
 
