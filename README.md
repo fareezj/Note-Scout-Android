@@ -5,7 +5,9 @@ Each group will be having its own group ID which identifies the group. User can 
 inserting their group ID on the home page of the app.
 
 Features of Note Scout:
-- Add new note
+- Add new note group
+- Join existing note group
+- Add new note item in a note group
 - Put check mark on any accomplished task/note
 - View the progress of the task(s)
 - Delete note
