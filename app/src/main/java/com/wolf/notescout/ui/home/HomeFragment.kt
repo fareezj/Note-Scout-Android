@@ -13,13 +13,20 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.wolf.notescout.R
+import com.wolf.notescout.data.model.GroupRestData
 import com.wolf.notescout.databinding.FragmentHomeBinding
 import com.wolf.notescout.ui.dashboard.NoteViewModel
+import com.wolf.notescout.ui.dialog.ExistingGroupDialog
+import com.wolf.notescout.ui.dialog.GroupNotFoundDialog
 import com.wolf.notescout.util.SharedPreferencesUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.add_new_group_note_dialog.*
+import kotlinx.android.synthetic.main.add_new_name_dialog.*
+import kotlinx.android.synthetic.main.add_new_name_dialog.et_new_username
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.join_existing_group_dialog.*
 
 
 class HomeFragment : Fragment() {
@@ -27,6 +34,8 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var viewModel: NoteViewModel
     private lateinit var navController: NavController
+    private lateinit var existingGroupDialog: ExistingGroupDialog
+    private lateinit var groupNotFoundDialog: GroupNotFoundDialog
     private var getGroupID: String = ""
     private var currentUser: String? = ""
     private var subscription = CompositeDisposable()
@@ -51,29 +60,69 @@ class HomeFragment : Fragment() {
 
         currentUser = SharedPreferencesUtil.username
         Log.i("CURRENTUSER", currentUser.toString())
-
-
         if(!currentUser.isNullOrEmpty()){
-            showGroupIdCL()
             hideNewUserCL()
         }else{
-            hideGroupIdCL()
             showNewUserCL()
         }
+        setupView()
 
-        et_home_groupId.addTextChangedListener(object : TextWatcher {
+    }
 
+    private fun setupView() {
+
+        binding.cvJoinExistingNote.setOnClickListener {
+            hideAddNewGroupCV()
+            showJoinGroupCV()
+        }
+
+        binding.cvAddNewGroupNote.setOnClickListener {
+            hideJoinGroupCV()
+            showAddNewGroupCV()
+        }
+
+        //===============LISTENER EXISTING GROUP=====================
+
+        et_existing_group_id.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {}
-
         })
 
-        btn_home_submit.setOnClickListener {
-            getGroupID = et_home_groupId.text.toString()
+        btn_submit_existing_group.setOnClickListener {
+            getGroupID = et_existing_group_id.text.toString()
             SharedPreferencesUtil.groupId = getGroupID.toInt()
             handleCheckNotesByGroupId(SharedPreferencesUtil.groupId)
         }
+
+        btn_back_existing_group.setOnClickListener {
+            hideJoinGroupCV()
+        }
+
+        //===============LISTENER EXISTING GROUP=====================
+
+        //===============LISTENER ADD NEW GROUP=====================
+
+        et_new_group_id.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        btn_submit_new_group_note.setOnClickListener {
+            getGroupID = et_new_group_id.text.toString()
+            val user: String = SharedPreferencesUtil.username!!
+            SharedPreferencesUtil.groupId = getGroupID.toInt()
+            handleAddNewGroupNote(getGroupID.toInt(), user)
+        }
+
+        btn_back_new_group_note.setOnClickListener {
+            hideAddNewGroupCV()
+        }
+
+        //===============LISTENER ADD NEW GROUP=====================
+
+        //===============LISTENER NEW USERNAME =====================
 
         et_new_username.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -85,42 +134,44 @@ class HomeFragment : Fragment() {
             SharedPreferencesUtil.username = et_new_username.text.toString()
             SharedPreferencesUtil.isFirstTime = false
             hideNewUserCL()
-            showGroupIdCL()
         }
+
+        //===============LISTENER NEW USERNAME =====================
 
     }
 
     private fun hideNewUserCL() {
-        cl_enter_username.visibility = View.GONE
-        et_new_username.isEnabled = false
-        btn_submit_username.isEnabled = false
+        cv_add_new_name_dialog.visibility = View.GONE
     }
 
     private fun showNewUserCL() {
-        cl_enter_username.visibility = View.VISIBLE
-        et_new_username.isEnabled = true
-        btn_submit_username.isEnabled = true
+        cv_add_new_name_dialog.visibility = View.VISIBLE
     }
 
-    private fun hideGroupIdCL() {
-        cl_enter_group_id.visibility = View.GONE
-        et_home_groupId.isEnabled = false
-        btn_home_submit.isEnabled = false
+    private fun hideJoinGroupCV() {
+        cv_join_existing_note_dialog.visibility = View.GONE
     }
 
-    private fun showGroupIdCL() {
-        cl_enter_group_id.visibility = View.VISIBLE
-        et_home_groupId.isEnabled = true
-        btn_home_submit.isEnabled = true
+    private fun showJoinGroupCV() {
+        cv_join_existing_note_dialog.visibility = View.VISIBLE
     }
+
+    private fun showAddNewGroupCV() {
+        cv_add_new_group_note_dialog.visibility = View.VISIBLE
+    }
+
+    private fun hideAddNewGroupCV() {
+        cv_add_new_group_note_dialog.visibility = View.GONE
+    }
+
 
     private fun handleCheckNotesByGroupId(groupID: Int){
-        val subscribe = viewModel.handleCheckNotesExistence(groupID)
+        val subscribe = viewModel.handleCheckGroupNotesExistence(groupID)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ it ->
+                .subscribe({
                     if (it.isEmpty()) {
-                        Log.i("DATA", "EMPTYYYYYY :PPPPPP")
+                        showGroupNotFoundDialog()
                     } else {
                         navController.navigate(R.id.action_homeFragment_to_dashboardFragment)
                     }
@@ -129,5 +180,32 @@ class HomeFragment : Fragment() {
                     Log.i("DATA", msg.toString())
                 })
         subscription.add(subscribe)
+    }
+
+    private fun handleAddNewGroupNote(groupId: Int, groupOwner: String) {
+        val subscribe = viewModel.addNewGroupNotes(groupId, groupOwner)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    Log.i("LEKOR", it.toString())
+                    if(it.message.equals("FAILED")) {
+                        showExistingGroupDialog()
+                    }else{
+                        navController.navigate(R.id.action_homeFragment_to_dashboardFragment)
+                    }
+                }, { err -> val msg = err.localizedMessage
+                    Log.i("DATA", msg!!)
+                })
+        subscription.add(subscribe)
+    }
+
+    private fun showExistingGroupDialog() {
+        existingGroupDialog = ExistingGroupDialog(requireContext())
+        existingGroupDialog.show()
+    }
+
+    private fun showGroupNotFoundDialog() {
+        groupNotFoundDialog = GroupNotFoundDialog(requireContext())
+        groupNotFoundDialog.show()
     }
 }

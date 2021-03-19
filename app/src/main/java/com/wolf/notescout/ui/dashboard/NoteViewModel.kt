@@ -4,7 +4,9 @@ import android.app.Application
 import android.text.BoringLayout
 import android.util.Log
 import androidx.lifecycle.*
+import com.wolf.notescout.data.model.GroupRestData
 import com.wolf.notescout.data.model.NoteRestData
+import com.wolf.notescout.data.model.ResponseBody
 import com.wolf.notescout.network.ApiServices
 import com.wolf.notescout.util.SharedPreferencesUtil
 import io.reactivex.Observable
@@ -32,8 +34,8 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
     private val _currentUser = MutableLiveData<String>()
     val currentUser: LiveData<String> = _currentUser
 
-    private fun getAllNotesFromApi(): Observable<List<NoteRestData.NoteData>>{
-        return noteAPI.getGroceries()
+    fun addNewGroupNotes(groupId: Int, groupOwner: String): Observable<ResponseBody.Response> {
+        return noteAPI.addNewGroupNote(groupId, groupOwner);
     }
 
      fun getCompletedNote() {
@@ -118,6 +120,7 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
                     allNotesCheck.clear()
                     it.map {
                         allNotesCheck.add(it)
+                        getCompletedNote()
                     }
                     //MANAGE ITEM COMPLETED LOGIC//
 
@@ -131,10 +134,9 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         subscription.add(subscribe)
     }
 
-    fun handleCheckNotesExistence(groupID: Int): Observable<List<NoteRestData.NoteData>>{
-        return noteAPI.getNoteItemByGroup(groupID)
+    fun handleCheckGroupNotesExistence(groupID: Int): Observable<List<GroupRestData.GroupData>>{
+        return noteAPI.checkGroupNoteExistence(groupID)
     }
-
 
     override fun onCleared() {
         subscription.clear()
